@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: studreum-richards_celia-#RUN#
+spec:
+  template:
+    spec:
+      priorityClassName: research-low
+      restartPolicy: "Never"
+      containers:
+        - name: studreum-laplace-container
+          image: lsx-stud-registry.informatik.uni-wuerzburg.de/studreum/pytorch-laplace:0.0.4
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: EPOCHES
+              value: "1e5"
+            - name: HIDDEN
+              value: "12"
+            - name: LR
+              value: ".01"
+            - name: LOGSTEPS
+              value: "1"
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+              cpu: "2"
+              memory: "32Gi"
+            requests:
+              nvidia.com/gpu: "1"
+              cpu: "2"
+              memory: "32Gi"
+          volumeMounts:
+            - mountPath: /home/stud/reum # directory IN the container
+              name: localdir # matches volume-name from below
+          command: ["/bin/sh","-c"]
+          args: ["cd /home/stud/reum/richards_celia/#RUN#; python3 -m richards_celia"]
+      imagePullSecrets:
+        - name: lsx-registry
+      volumes:
+        - name: localdir
+          cephfs:
+            monitors:
+              - 132.187.14.16,132.187.14.17,132.187.14.19,132.187.14.20  # Not important for you, just copy along
+            user: studreum  # <namespace>
+            path: "/home/stud/reum" # The path you want to mount
+            secretRef: # The name of the secret for auth. Is always "ceph-secret"
+              name: ceph-secret
