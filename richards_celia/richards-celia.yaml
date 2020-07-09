@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: studreum-richards-celia-run13
+  name: studreum-richards-celia-run41
 spec:
   template:
     spec:
@@ -9,25 +9,36 @@ spec:
       restartPolicy: "Never"
       containers:
         - name: studreum-laplace-container
-          image: lsx-stud-registry.informatik.uni-wuerzburg.de/studreum/pytorch-laplace:0.0.4
+          image: lsx-stud-registry.informatik.uni-wuerzburg.de/studreum/pytorch-laplace:0.0.6
           imagePullPolicy: "IfNotPresent"
           env:
             - name: EPOCHES
-              value: "1e4"
+              value: "1e9"
+            - name: HYPERTRIALS
+              value: "20"
+            - name: DIVISIONS
+              value: "400"
+            - name: HIDDEN
+              value: "10"
+            - name: NEURONS
+              value: "40"
+            - name: LR
+              value: ".001"
           resources:
             limits:
               nvidia.com/gpu: "1"
-              cpu: "4"
-              memory: "64Gi"
+              cpu: "2"
+              memory: "256Gi"
             requests:
               nvidia.com/gpu: "1"
-              cpu: "4"
-              memory: "64Gi"
+              cpu: "2"
+              memory: "128Gi"
           volumeMounts:
             - mountPath: /home/stud/reum # directory IN the container
               name: localdir # matches volume-name from below
           command: ["/bin/sh","-c"]
-          args: ["cd /home/stud/reum/runs/richards-celia/run13; python3 -m richards_celia"]
+          # args: ["cd /home/stud/reum/runs/richards-celia/run41; python3 -m richards_celia"]
+          args: ["cd /home/stud/reum/runs/richards-celia/run41; python3 -m richards_celia"]
       imagePullSecrets:
         - name: lsx-registry
       volumes:

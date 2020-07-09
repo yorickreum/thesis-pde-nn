@@ -1,5 +1,10 @@
 .DS_Store
 
+# Kubectl
+*.yaml
+give_me_a_gpu
+richards_celia_runs
+
 # Docker
 *.sh
 Dockerfile
